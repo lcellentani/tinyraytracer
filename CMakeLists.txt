@@ -22,6 +22,7 @@ list(APPEND TINYRAYTRACER_ALL_INCLUDES ${TINYRAYTRACER_INCLUDES})
 
 add_executable(${TARGET_NAME}
 	${TINYRAYTRACER_ALL_INCLUDES}
+	source/camera.cpp
 	source/main.cpp
 	source/ray.cpp
 	source/sphere.cpp
