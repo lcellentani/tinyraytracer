@@ -1,6 +1,8 @@
 #pragma once
 
 #include "primitive.h"
+#include "material.h"
+#include <memory>
 
 namespace tinyraytracer
 {
@@ -8,7 +10,7 @@ namespace tinyraytracer
 class sphere : public primitive {
 public:
 	sphere() = default;
-	sphere(const vec3& c, float r) : mCenter(c) {
+	sphere(const vec3& c, float r, std::unique_ptr<material> m) : mCenter(c), mMaterial(std::move(m)) {
 		set_radius(r);
 	}
 	~sphere() = default;
@@ -19,11 +21,12 @@ public:
 		mInvRadius = 1.0f / mRadius;
 	}
 
-	bool raycast(const ray& ray, float minDistance, float maxDistance, ray::hitinfo& hitinfo) override;
+	bool raycast(const ray& r, float minDistance, float maxDistance, rayhit& hit) override;
 
 private:
 	vec3 mCenter;
 	float mRadius;
+	std::unique_ptr<material> mMaterial;
 
 	float mSquaredRadius;
 	float mInvRadius;

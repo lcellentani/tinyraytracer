@@ -8,12 +8,6 @@ namespace tinyraytracer
 
 class ray {
 public:
-	struct hitinfo {
-		float t;
-		vec3 point;
-		vec3 normal;
-	};
-public:
 	ray() = default;
 	ray(const vec3& o, const vec3& d) : mOrigin(o), mDirection(d) {}
 

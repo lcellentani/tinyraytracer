@@ -110,6 +110,10 @@ public:
 		return *this;
 	}
 
+	friend vec3 operator*(const vec3& v1, const vec3& v2) {
+		return vec3(v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2]);
+	}
+
 	friend vec3 operator*(const vec3& v, float scalar) {
 		vec3 result(v);
 		result[0] *= scalar;
