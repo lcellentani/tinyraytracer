@@ -47,21 +47,20 @@ public:
 	}
 
 	vec3& normalize() {
-		float len = length();
-		mData[0] /= len;
-		mData[1] /= len;
-		mData[2] /= len;
+		float il = 1.0f / length();
+		mData[0] *= il;
+		mData[1] *= il;
+		mData[2] *= il;
 		return *this;
 	}
 
-	vec3 normalized() {
-		return normalize();
+	vec3 normalized() const {
+		vec3 result(*this);
+		return result / result.length();
 	}
 
 	const vec3& operator+() const { return *this; }
-	vec3& operator+() { return *this; }
-	const vec3& operator-() const { return *this; }
-	vec3& operator-() { return *this; }
+	vec3 operator-() const { return vec3(-mData[0], -mData[1], -mData[2]); }
 
 	vec3 operator+(const vec3& other) {
 		return vec3(*this) += other;

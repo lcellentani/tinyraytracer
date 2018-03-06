@@ -13,6 +13,7 @@
 #include "util.h"
 #include "lambertian.h"
 #include "metal.h"
+#include "dieletric.h"
 
 using namespace tinyraytracer;
 
@@ -28,8 +29,8 @@ vec3 color(const ray& r, const std::vector<std::unique_ptr<primitive>>& primitiv
 			}
 		}
 	}
-	vec3 d = r.direction().normalized();
-	float t = 0.5f * (d.y() + 1.0f);
+	vec3 normalized_dir = r.direction().normalized();
+	float t = 0.5f * (normalized_dir.y() + 1.0f);
 	return ((1.0f - t) * vec3(1.0f)) + (t * vec3(0.5f, 0.7f, 1.0f));
 }
 
@@ -43,10 +44,11 @@ void main() {
 	vec3 vertical(0.0f, 2.0f, 0.0f);
 	vec3 origin(0.0f, 0.0f, 0.0f);
 	std::vector<std::unique_ptr<primitive>> primitives;
-	primitives.push_back(std::make_unique<sphere>(vec3(0.0f, 0.0f, -1.0f), 0.5f, std::make_unique<lambertian>(vec3(0.8f, 0.3f, 0.3f))));
-	primitives.push_back(std::make_unique<sphere>(vec3(1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<metal>(vec3(0.8f, 0.6f, 0.2f))));
-	primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<metal>(vec3(0.8f, 0.8f, 0.8f))));
+	primitives.push_back(std::make_unique<sphere>(vec3(0.0f, 0.0f, -1.0f), 0.5f, std::make_unique<lambertian>(vec3(0.1f, 0.2f, 0.5f))));
+	primitives.push_back(std::make_unique<sphere>(vec3(1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<metal>(vec3(0.8f, 0.6f, 0.2f), 0.3f)));
 	primitives.push_back(std::make_unique<sphere>(vec3(0.0f, -100.5f, -1.0f), 100.0f, std::make_unique<lambertian>(vec3(0.8f, 0.8f, 0.0f))));
+	primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<dieletric>(1.55f)));
+	primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), -0.45f, std::make_unique<dieletric>(1.55f)));
 	camera mainCamera;
 	for (int32_t j = ny - 1; j >= 0; j--) {
 		for (int32_t i = 0; i < nx; i++) {
