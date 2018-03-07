@@ -25,6 +25,7 @@ add_executable(${TARGET_NAME}
 	source/camera.cpp
 	source/main.cpp
 	source/sphere.cpp
+	source/timing.cpp
 	source/util.cpp
 )
 
@@ -33,7 +34,7 @@ set_target_properties(${TARGET_NAME}
 		CXX_STANDARD 11
 		CXX_STANDARD_REQUIRED ON
 		CXX_EXTENSIONS OFF
-		VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/media"
+		VS_DEBUGGER_WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
 )
 
 if(MSVC)
