@@ -17,7 +17,8 @@ vec3 random_in_unit_sphere() {
 }
 
 vec3 reflect(const vec3& v, const vec3& n) {
-	return v - (2.0f * vec3::dot(v, n) * n);
+	vec3 uv = v.normalized();
+	return uv - (2.0f * vec3::dot(uv, n) * n);
 }
 
 bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted) {

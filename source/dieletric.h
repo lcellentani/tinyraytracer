@@ -14,14 +14,15 @@ public:
 		float NdotD = vec3::dot(r.direction(), hit.normal);
 
 		vec3 outward_normal = hit.normal;
+		float len = r.direction().length();
 		float ni_over_nt = mInvRefractiveIndex;
-		float cosine = -NdotD / r.direction().length();
+		float cosine = -NdotD / len;
 		if (NdotD > 0) {
 			outward_normal = -hit.normal;
 			ni_over_nt = mRefractiveIndex;
-			//cosine = mRefractiveIndex * NdotD / r.direction().length();
-			cosine = NdotD / r.direction().length();
-			cosine = sqrt(1 - mRefractiveIndex * mRefractiveIndex * (1.0f - cosine * cosine));
+			cosine = mRefractiveIndex * NdotD / len;
+			//cosine = NdotD / len;
+			//cosine = sqrt(1 - mRefractiveIndex * mRefractiveIndex * (1.0f - cosine * cosine));
 		}
 		
 		vec3 refracted;

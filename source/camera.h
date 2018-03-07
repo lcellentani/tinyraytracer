@@ -8,12 +8,7 @@ namespace tinyraytracer
 
 class camera {
 public:
-	camera()
-		: mOrigin(0.0f, 0.0f, 0.0f)
-		, mBottomLeftCorner(-2.0f, -1.0f, -1.0f)
-		, mHorizontal(4.0f, 0.0f, 0.0f)
-		, mVertical(0.0f, 2.0f, 0.0f) {
-	}
+	camera(const vec3& lookfrom, const vec3& lookat, const vec3& up, float fovy, float aspect);
 
 	void set_origin(const vec3& origin) {
 		mOrigin = origin;

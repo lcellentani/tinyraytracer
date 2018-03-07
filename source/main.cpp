@@ -35,8 +35,8 @@ vec3 color(const ray& r, const std::vector<std::unique_ptr<primitive>>& primitiv
 }
 
 void main() {
-	int32_t nx = 200;
-	int32_t ny = 100;
+	int32_t nx = 800;
+	int32_t ny = 400;
 	int32_t ns = 100;
 	std::cout << "P3\n" << nx << " " << ny << "\n255\n";
 	vec3 lower_left_corner(-2.0f, -1.0f, -1.0f);
@@ -46,10 +46,11 @@ void main() {
 	std::vector<std::unique_ptr<primitive>> primitives;
 	primitives.push_back(std::make_unique<sphere>(vec3(0.0f, 0.0f, -1.0f), 0.5f, std::make_unique<lambertian>(vec3(0.1f, 0.2f, 0.5f))));
 	primitives.push_back(std::make_unique<sphere>(vec3(1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<metal>(vec3(0.8f, 0.6f, 0.2f), 0.3f)));
+	//primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<metal>(vec3(0.8f, 0.8f, 0.8f), 1.0f)));
+	primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<dieletric>(1.5f)));
+	//primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), -0.45f, std::make_unique<dieletric>(1.5f)));
 	primitives.push_back(std::make_unique<sphere>(vec3(0.0f, -100.5f, -1.0f), 100.0f, std::make_unique<lambertian>(vec3(0.8f, 0.8f, 0.0f))));
-	primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), 0.5f, std::make_unique<dieletric>(1.55f)));
-	primitives.push_back(std::make_unique<sphere>(vec3(-1.0f, 0.0f, -1.0f), -0.45f, std::make_unique<dieletric>(1.55f)));
-	camera mainCamera;
+	camera mainCamera(vec3(-2.0f, 1.0f, 1.0f), vec3(0.0f, 0.0f, -1.0f), vec3(0.0f, 1.0f, 0.0f), 60.0f, float(nx) / float(ny));
 	for (int32_t j = ny - 1; j >= 0; j--) {
 		for (int32_t i = 0; i < nx; i++) {
 			vec3 c;

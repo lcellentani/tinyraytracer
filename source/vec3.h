@@ -21,6 +21,15 @@ public:
 		mData[0] = mData[1] = mData[2] = scalar;
 	}
 
+	vec3& operator=(const vec3& other) {
+		if (&other != this) {
+			mData[0] = other.mData[0];
+			mData[1] = other.mData[1];
+			mData[2] = other.mData[2];
+		}
+		return *this;
+	}
+
 	float x() const { return mData[0]; }
 	float& x() { return mData[0]; };
 	float y() const { return mData[1]; }
@@ -84,31 +93,46 @@ public:
 		return result;
 	}
 
-	vec3& operator +=(const vec3& other) {
+	vec3& operator+=(const vec3& other) {
 		mData[0] += other.mData[0];
 		mData[1] += other.mData[1];
 		mData[2] += other.mData[2];
 		return *this;
 	}
-	vec3& operator -=(const vec3& other) {
+	vec3& operator-=(const vec3& other) {
 		mData[0] -= other.mData[0];
 		mData[1] -= other.mData[1];
 		mData[2] -= other.mData[2];
 		return *this;
 	}
-	vec3& operator *=(const vec3& other) {
+	vec3& operator*=(const vec3& other) {
 		mData[0] *= other.mData[0];
 		mData[1] *= other.mData[1];
 		mData[2] *= other.mData[2];
 		return *this;
 	}
-	vec3& operator /=(const vec3& other) {
+	vec3& operator/=(const vec3& other) {
 		mData[0] /= other.mData[0];
 		mData[1] /= other.mData[1];
 		mData[2] /= other.mData[2];
 		return *this;
 	}
 
+	vec3& operator*=(const float scalar) {
+		mData[0] *= scalar;
+		mData[1] *= scalar;
+		mData[2] *= scalar;
+		return *this;
+	}
+
+	vec3& operator/=(const float scalar) {
+		float k = 1.0f / scalar;
+		mData[0] *= k;
+		mData[1] *= k;
+		mData[2] *= k;
+		return *this;
+	}
+		
 	friend vec3 operator*(const vec3& v1, const vec3& v2) {
 		return vec3(v1[0] * v2[0], v1[1] * v2[1], v1[2] * v2[2]);
 	}
@@ -126,9 +150,10 @@ public:
 
 	friend vec3 operator/(const vec3& v, float scalar) {
 		vec3 result(v);
-		result[0] /= scalar;
-		result[1] /= scalar;
-		result[2] /= scalar;
+		float k = 1.0f / scalar;
+		result[0] *= k;
+		result[1] *= k;
+		result[2] *= k;
 		return result;
 	}
 	friend vec3 operator/(float scalar, const vec3& v) {
@@ -136,11 +161,15 @@ public:
 	}
 
 	static float dot(const vec3& v1, const vec3& v2) {
-		return v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2];
+		return (v1.mData[0] * v2.mData[0]) + (v1.mData[1] * v2.mData[1]) + (v1.mData[2] * v2.mData[2]);
 	}
 
 	static vec3 cross(const vec3& v1, const vec3& v2) {
-		return vec3((v1[1] * v2[2] - v1[2] * v2[1]), (v1[2] * v1[0] - v1[0] * v2[2]), (v1[0] * v2[1] - v1[1] * v2[0]));
+		return vec3(
+			(v1.mData[1] * v2.mData[2] - v1.mData[2] * v2.mData[1]),
+			-(v1.mData[0] * v2.mData[2] - v1.mData[2] * v2.mData[0]),
+			(v1.mData[0] * v2.mData[1] - v1.mData[1] * v2.mData[0])
+		);
 	}
 
 private:
