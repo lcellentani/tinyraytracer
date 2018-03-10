@@ -1,8 +1,12 @@
 #include <iostream>
 #include <cstdint>
 #include <vector>
+#include <array>
 #include <memory>
 #include <limits>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 #include "vec3.h"
 #include "ray.h"
@@ -72,9 +76,9 @@ void create_random_scene(std::vector<std::unique_ptr<primitive>>& primitives) {
 }
 
 void main() {
-	int32_t nx = 1200;
-	int32_t ny = 800;
-	int32_t ns = 50;
+	int32_t width = 200;// 1200;
+	int32_t height = 100;// 800;
+	int32_t samples = 50;
 
 	std::vector<std::unique_ptr<primitive>> primitives;
 	//primitives.push_back(std::make_unique<sphere>(vec3(0.0f, 0.0f, -1.0f), 0.5f, std::make_unique<lambertian>(vec3(0.1f, 0.2f, 0.5f))));
@@ -87,30 +91,49 @@ void main() {
 
 	vec3 lookfrom(13.0f, 2.0f, 3.0f);
 	vec3 lookat(0.0f, 0.0f, 0.0f);
-	camera mainCamera(lookfrom, lookat, vec3(0.0f, 1.0f, 0.0f), 20.0f, float(nx) / float(ny), 0.1f, 10.0f);
+	camera mainCamera(lookfrom, lookat, vec3(0.0f, 1.0f, 0.0f), 20.0f, float(width) / float(height), 0.1f, 10.0f);
 	
 #ifndef NDEBUG
 	int64_t t0 = GetTime();
 #endif
 
-	std::cout << "P3\n" << nx << " " << ny << "\n255\n";
-	for (int32_t j = ny - 1; j >= 0; j--) {
-		for (int32_t i = 0; i < nx; i++) {
-			vec3 c;
-			for (int32_t s = 0; s < ns; s++) {
-				float u = float(i + random::get(0.0f, 1.0f)) / float(nx);
-				float v = float(j + random::get(0.0f, 1.0f)) / float(ny);
-				ray r = mainCamera.get_ray(u, v);
-				c += color(r, primitives, 0);
-			}
-			c /= float(ns);
-			c = vec3(std::sqrt(c[0]), std::sqrt(c[1]), std::sqrt(c[2]));
-			int ir = int(255.99f * c.r());
-			int ig = int(255.99f * c.g());
-			int ib = int(255.99f * c.b());
-			std::cout << ir << " " << ig << " " << ib << "\n";
+	std::size_t count = 0;
+
+	std::size_t max = width * height;
+	float iw = 1.0f / float(width);
+	float ih = 1.0f / float(height);
+	std::vector<vec3> colors;
+	colors.reserve(max);
+	while(true) {
+		std::size_t index = count++;
+		if (index >= max) {
+			break;
 		}
+		int64_t i = index % width;
+		int64_t j = index / width;
+		vec3 c;
+		for (int32_t s = 0; s < samples; s++) {
+			float u = float(i + random::get(0.0f, 1.0f)) * iw;
+			float v = float(j + random::get(0.0f, 1.0f)) * ih;
+			ray r = mainCamera.get_ray(u, v);
+			c += color(r, primitives, 0);
+		}
+		c /= float(samples);
+		c = vec3(std::sqrt(c[0]), std::sqrt(c[1]), std::sqrt(c[2]));
+		colors.emplace_back(c);
 	}
+
+	uint8_t* data = new uint8_t[width * height * 3];
+	uint8_t* ptr = &data[0];
+	for (auto& c : colors) {
+		*ptr++ = uint8_t(255.99f * c.r());
+		*ptr++ = uint8_t(255.99f * c.g());
+		*ptr++ = uint8_t(255.99f * c.b());
+	}
+	stbi_flip_vertically_on_write(1);
+	stbi_write_jpg("temp.jpg", width, height, 3, data, 100);
+
+	delete[] data;
 
 #ifndef NDEBUG
 	int64_t t1 = GetTime();
@@ -118,3 +141,4 @@ void main() {
 	std::cerr << elapsed << std::endl;
 #endif
 }
+ 
